@@ -12,12 +12,14 @@ const createDeviceSchema = z.object({
 export const devicesRouter = Router();
 devicesRouter.use(requireAuth);
 
+/// Post route for device "/devices"
 devicesRouter.post('/', async (req, res) => {
   const data = createDeviceSchema.parse(req.body);
   const device = await createDevice(AppDataSource, req.user!.id, data);
   res.status(201).json(device);
 });
 
+/// Get route for device "/devices"
 devicesRouter.get('/', async (req, res) => {
   res.json(await findDevicesForUser(AppDataSource, req.user!.id));
 });

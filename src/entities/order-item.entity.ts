@@ -8,6 +8,7 @@ import {
 import { Order } from './order.entity';
 import { Product } from './product.entity';
 
+/// Table reference in form of entity for order items
 @Entity('order_items')
 export class OrderItem {
   @PrimaryGeneratedColumn('uuid')

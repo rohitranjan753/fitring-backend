@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { Device } from './device.entity';
 
+/// User enity table
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')

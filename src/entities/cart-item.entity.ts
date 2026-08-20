@@ -11,6 +11,9 @@ import {
 import { User } from './user.entity';
 import { Product } from './product.entity';
 
+
+/// Table reference in form of entity for cart items
+/// Same user can't have two row with same userid and productId
 @Entity('cart_items')
 @Unique('uq_cart_items_user_product', ['userId', 'productId'])
 export class CartItem {

@@ -13,7 +13,7 @@ import { Device } from './device.entity';
 /**
  * `(device_id, client_uuid)` is the idempotency key the mobile app's sync
  * queue relies on — a retried POST for the same reading is a no-op, not a
- * duplicate row. See the offline-sync section of the PRD.
+ * duplicate row.
  */
 @Entity('health_readings')
 @Unique('uq_health_readings_device_client_uuid', ['deviceId', 'clientUuid'])

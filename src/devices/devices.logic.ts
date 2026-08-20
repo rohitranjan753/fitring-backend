@@ -6,6 +6,11 @@ import {
   NotFoundError,
 } from '../errors/http-error';
 
+/// As it has only two methods post and get
+/// That will be create device and find device
+
+
+
 export async function createDevice(
   dataSource: DataSource,
   userId: string,
@@ -32,7 +37,7 @@ export function findDevicesForUser(
     .find({ where: { userId }, order: { createdAt: 'DESC' } });
 }
 
-/** Every health-adjacent route that takes a deviceId calls this first. */
+// Every health-adjacent route that takes a deviceId calls this first.
 export async function assertDeviceOwnership(
   dataSource: DataSource,
   deviceId: string,

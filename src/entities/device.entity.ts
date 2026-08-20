@@ -10,6 +10,7 @@ import {
 import { User } from './user.entity';
 import { HealthReading } from './health-reading.entity';
 
+/// Table reference in form of entity for devices
 @Entity('devices')
 export class Device {
   @PrimaryGeneratedColumn('uuid')

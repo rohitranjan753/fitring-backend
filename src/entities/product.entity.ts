@@ -5,6 +5,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
+/// Table reference in form of entity for product table
 @Entity('products')
 export class Product {
   @PrimaryGeneratedColumn('uuid')
