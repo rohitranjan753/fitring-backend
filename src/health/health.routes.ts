@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { z} from 'zod';
+import { z } from 'zod';
 import { AppDataSource } from '../config/data-source';
 import { requireAuth } from '../middleware/auth';
 import {

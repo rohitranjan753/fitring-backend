@@ -14,7 +14,7 @@ export enum OrderStatus {
   PLACED = 'placed',
 }
 
-/// Table reference in form of entity for order 
+/// Table reference in form of entity for order
 @Entity('orders')
 export class Order {
   @PrimaryGeneratedColumn('uuid')

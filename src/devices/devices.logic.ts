@@ -9,8 +9,6 @@ import {
 /// As it has only two methods post and get
 /// That will be create device and find device
 
-
-
 export async function createDevice(
   dataSource: DataSource,
   userId: string,

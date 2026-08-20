@@ -8,7 +8,10 @@ export interface AuthUser {
   email: string;
 }
 
+// Augmenting Express's own ambient Request type requires merging into its
+// namespace; there's no ES module equivalent for this.
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface Request {
       user?: AuthUser;

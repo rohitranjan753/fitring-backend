@@ -97,7 +97,7 @@ export async function summarizeReadings(
     .createQueryBuilder('r')
     .select(`date_trunc('${bucket}', r.recorded_at)`, 'bucket')
     .addSelect('avg(r.heart_rate)', 'avgHeartRate') // avg heart rate
-    .addSelect('min(r.heart_rate)', 'minHeartRate') /// min hear rate 
+    .addSelect('min(r.heart_rate)', 'minHeartRate') /// min hear rate
     .addSelect('max(r.heart_rate)', 'maxHeartRate') // max heart rate
     .addSelect('avg(r.spo2)', 'avgSpo2') // avg for spo2
     .addSelect('max(r.steps)', 'steps') // max for spo2

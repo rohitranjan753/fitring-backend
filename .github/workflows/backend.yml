@@ -1,0 +1,28 @@
+name: Backend basic check and test yaml
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      
+      # clean install of node modules
+      - run: npm ci
+      
+      #Check for any lint errors
+      - run: npm run lint  
+      
+      #Run test with jest
+      - run: npm test
+      
+      # Run end to end http tests
+      - run: npm run test:e2e

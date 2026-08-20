@@ -2,7 +2,7 @@
 
 Express + TypeORM + PostgreSQL API for the ERBrains wearable health & shopping take-home. Implements all 12 endpoints from the assignment brief, with idempotent health-reading ingestion and atomic order creation as the two pieces of business logic that actually get tested (see `npm test`).
 
-Originally built with NestJS; migrated to plain Express so the request flow is directly traceable — no decorators, no dependency-injection container, no module wiring to learn before you can follow a request from route to database. The underlying logic (idempotent upsert, order transaction, JWT auth) is unchanged.
+Built on plain Express rather than a framework like NestJS so the request flow stays directly traceable — no decorators, no dependency-injection container, no module wiring to learn before you can follow a request from route to database.
 
 ## Status
 
@@ -94,5 +94,13 @@ npm test          # unit tests — mocked DataSource, no DB needed
 npm run test:e2e  # real HTTP requests via supertest against the actual Express app
 ```
 
-Unit tests (`*.logic.spec.ts`, colocated with the logic they test) cover the areas the assignment explicitly calls out as worth testing: idempotent health-reading ingestion, order-total/atomicity correctness, and auth (right/wrong credentials, never revealing which was wrong — plus a device-ownership check added during the migration). The e2e suite (`test/app.e2e-spec.ts`) hits the real Express app through `supertest`, not a mocked framework module.
+Unit tests (`*.logic.spec.ts`, colocated with the logic they test, 22 total) cover the areas the assignment explicitly calls out as worth testing:
+
+- **auth** — right/wrong credentials, never revealing which was wrong
+- **devices** — `assertDeviceOwnership` returns the device when it's owned by the caller, throws `NotFoundError` when it doesn't exist, and throws `ForbiddenError` when it belongs to someone else (this is the check every device-scoped route relies on — see [Architecture](#architecture)); `createDevice` also rejects a duplicate `externalId` even across users
+- **health** — idempotent ingestion (`ON CONFLICT DO NOTHING` on a retried batch), device-ownership enforcement on ingest, and summary rounding
+- **cart** — `addOrUpdateCartItem` sets a line's quantity rather than incrementing it, and refuses to add a product that doesn't exist; `findCartForUser`'s total calculation
+- **orders** — order-total/atomicity correctness (cart cleared only after the order actually saved, in the same transaction)
+
+The e2e suite (`test/app.e2e-spec.ts`) hits the real Express app through `supertest`, not a mocked framework module.
 
