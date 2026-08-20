@@ -4,7 +4,7 @@ import { AppDataSource } from '../config/data-source';
 import { login } from './auth.logic';
 
 const loginSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   password: z.string().min(6),
 });
 
