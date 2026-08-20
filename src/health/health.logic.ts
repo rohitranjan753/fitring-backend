@@ -10,13 +10,9 @@ export interface HealthReadingInput {
   recordedAt: string;
 }
 
-/**
- * Idempotent by design: `(device_id, client_uuid)` is unique, and the
- * insert uses ON CONFLICT DO NOTHING, so a retried batch (the mobile sync
- * queue's whole reason for existing) is a safe no-op. Every submitted
- * clientUuid is reported accepted whether it was newly inserted or already
- * present, so the client always dequeues what it sent.
- */
+/// Saving a batch of readings
+/// First verify the device ownership based on device id and userId
+/// Insert data, if an entry with same client id and device id already exist, skip it as it is retry
 export async function ingestReadings(
   dataSource: DataSource,
   userId: string,
@@ -46,7 +42,7 @@ export async function ingestReadings(
   return { accepted: readings.map((r) => r.clientUuid) };
 }
 
-/** Keyset-paginated on recorded_at — the History screen never binds to the full table. */
+// Browsing raw history, use default max cap, otherwise use fallback which is 50
 export async function findReadings(
   dataSource: DataSource,
   userId: string,
@@ -83,7 +79,7 @@ interface SummaryRow {
   steps: string | null;
 }
 
-/** Server-side aggregation — charts and the weekly summary never pull raw rows into the client. */
+// Daily/weekly averages
 export async function summarizeReadings(
   dataSource: DataSource,
   userId: string,
@@ -100,11 +96,11 @@ export async function summarizeReadings(
     .getRepository(HealthReading)
     .createQueryBuilder('r')
     .select(`date_trunc('${bucket}', r.recorded_at)`, 'bucket')
-    .addSelect('avg(r.heart_rate)', 'avgHeartRate')
-    .addSelect('min(r.heart_rate)', 'minHeartRate')
-    .addSelect('max(r.heart_rate)', 'maxHeartRate')
-    .addSelect('avg(r.spo2)', 'avgSpo2')
-    .addSelect('max(r.steps)', 'steps')
+    .addSelect('avg(r.heart_rate)', 'avgHeartRate') // avg heart rate
+    .addSelect('min(r.heart_rate)', 'minHeartRate') /// min hear rate 
+    .addSelect('max(r.heart_rate)', 'maxHeartRate') // max heart rate
+    .addSelect('avg(r.spo2)', 'avgSpo2') // avg for spo2
+    .addSelect('max(r.steps)', 'steps') // max for spo2
     .where('r.device_id = :deviceId', { deviceId })
     .groupBy('bucket')
     .orderBy('bucket', 'ASC')
