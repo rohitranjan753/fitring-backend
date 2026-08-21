@@ -71,6 +71,24 @@ describe('orders.logic placeOrder', () => {
     ]);
   });
 
+  it("includes each item's product on the returned order, matching what GET /orders returns", async () => {
+    // Regression: OrderItem.product is eager-loaded when re-queried (GET
+    // /orders), but manager.create() here builds an in-memory OrderItem
+    // that's never re-fetched — if `product` isn't set explicitly, this
+    // response silently omits it while GET /orders includes it, and the
+    // mobile client's shared Order parser (which requires `product` on
+    // every item) throws on the inconsistent shape.
+    const product = { price: '10.00', name: 'FitRing Charging Dock' };
+    manager.find.mockResolvedValue([{ productId: 'p1', quantity: 2, product }]);
+
+    const order = (await placeOrder(
+      fakeDataSource(manager),
+      'user-1',
+    )) as unknown as { items: { product: unknown }[] };
+
+    expect(order.items[0].product).toBe(product);
+  });
+
   it('clears the cart only after the order is created, in the same transaction', async () => {
     manager.find.mockResolvedValue([
       { productId: 'p1', quantity: 1, product: { price: '10.00' } },

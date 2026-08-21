@@ -35,6 +35,7 @@ export async function placeOrder(
         items: cartItems.map((item) =>
           manager.create(OrderItem, {
             productId: item.productId,
+            product: item.product,
             quantity: item.quantity,
             unitPrice: item.product.price,
           }),
